@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Система авторизації</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Вхід до системи</h1>
+  <div id="login-form">
+    <input type="text" id="username" placeholder="Ім'я користувача" required>
+    <input type="password" id="password" placeholder="Пароль" required>
+    <button onclick="login()">Увійти</button>
+  </div>
+
+  <div id="admin-panel" class="hidden">
+    <h2>Панель адміністратора</h2>
+    <button onclick="addUser()">Додати користувача</button>
+    <button onclick="blockUser()">Блокувати користувача</button>
+    <button onclick="viewUsers()">Переглянути всіх користувачів</button>
+    <button onclick="setPasswordRestrictions()">Керувати обмеженнями пароля</button>
+  </div>
+
+  <div id="user-panel" class="hidden">
+    <h2>Панель користувача</h2>
+    <button onclick="changePassword()">Змінити пароль</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

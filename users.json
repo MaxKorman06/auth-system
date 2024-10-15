@@ -1,0 +1,34 @@
+[
+  {
+    "username": "ADMIN",
+    "password": "123",
+    "isAdmin": true,
+    "isBlocked": false,
+    "passwordRestrictions": false,
+    "failedAttempts": 0
+  },
+  {
+    "username": "user1",
+    "password": "RFVКАМ",
+    "isAdmin": false,
+    "isBlocked": false,
+    "passwordRestrictions": true,
+    "failedAttempts": 0
+  },
+  {
+    "username": "Test 1",
+    "password": "",
+    "isAdmin": false,
+    "isBlocked": true,
+    "passwordRestrictions": true,
+    "failedAttempts": 0
+  },
+  {
+    "username": "Test 2",
+    "password": "",
+    "isAdmin": false,
+    "isBlocked": false,
+    "passwordRestrictions": false,
+    "failedAttempts": 0
+  }
+]
