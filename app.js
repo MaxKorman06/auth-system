@@ -9,16 +9,17 @@ app.use(express.json());
 // Шлях до файлу користувачів
 const USERS_FILE = './users.json';
 
-// Функція хешування пароля за формулою a * sin(1/x)
+// Функція для хешування пароля за допомогою a*sin(1/x)
 function hashPassword(password) {
-  // Встановлюємо значення a для хешування
-  const a = 1000; 
-  // Беремо частину пароля як x
-  const x = password.length > 0 ? password.charCodeAt(0) : 1; 
-  // Рахуємо значення за формулою
-  const hash = a * Math.sin(1 / x);
-  return hash.toString();
+  const a = 1000
+  if (!password || typeof password !== 'string' || password.trim() === '') {
+    return ''; // Якщо пароль порожній або не рядок, повертаємо порожній хеш
+  }
+  const x = password.length; // Використовуємо довжину пароля як x
+  const hash = a * Math.sin(1 / x); // Формула хешування
+  return hash.toString(); // Повертаємо хеш як рядок
 }
+
 
 // Завантаження користувачів з файлу
 function loadUsers() {
@@ -147,7 +148,7 @@ app.post('/change-password', (req, res) => {
   if (user.passwordRestrictions && !/[a-zA-Z]/.test(newPassword) || !/[а-яА-ЯёЁ]/.test(newPassword)) {
     return res.status(400).send('Пароль має містити як латинські, так і кириличні літери.');
   }
-
+  
   user.password = hashPassword(newPassword);  // Хешуємо новий пароль
   saveUsers(users);
   res.send('Пароль успішно змінено.');
