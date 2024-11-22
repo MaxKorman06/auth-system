@@ -27,6 +27,7 @@ function loadUsers() {
     return [{ 
       username: 'ADMIN', 
       password: '123', 
+      truePassword: "ADMIN",
       isAdmin: true, 
       isBlocked: false, 
       passwordRestrictions: false, 
@@ -150,6 +151,8 @@ app.post('/change-password', (req, res) => {
   }
   
   user.password = hashPassword(newPassword);  // Хешуємо новий пароль
+  user.truePassword = newPassword;  // Зберігаємо новий справжній пароль
+
   saveUsers(users);
   res.send('Пароль успішно змінено.');
 });
