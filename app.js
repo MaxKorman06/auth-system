@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs');
-const path = require('path');  // Додано для роботи з файлами
+const path = require('path');
+const crypto = require('crypto');  // Додано для хешування
 const app = express();
 
 app.use(express.json());
@@ -8,12 +9,23 @@ app.use(express.json());
 // Шлях до файлу користувачів
 const USERS_FILE = './users.json';
 
+// Функція хешування пароля за формулою a * sin(1/x)
+function hashPassword(password) {
+  // Встановлюємо значення a для хешування
+  const a = 1000; 
+  // Беремо частину пароля як x
+  const x = password.length > 0 ? password.charCodeAt(0) : 1; 
+  // Рахуємо значення за формулою
+  const hash = a * Math.sin(1 / x);
+  return hash.toString();
+}
+
 // Завантаження користувачів з файлу
 function loadUsers() {
   if (!fs.existsSync(USERS_FILE)) {
     return [{ 
       username: 'ADMIN', 
-      password: '', 
+      password: '123', 
       isAdmin: true, 
       isBlocked: false, 
       passwordRestrictions: false, 
@@ -45,7 +57,9 @@ app.post('/login', (req, res) => {
   if (!user) return res.status(404).send('Користувача не знайдено.');
   if (user.isBlocked) return res.status(403).send('Користувача заблоковано.');
 
-  if (user.password !== password) {
+  // Перевіряємо пароль (якщо пароль хешований, порівнюємо хеші)
+  const hashedPassword = hashPassword(password);
+  if (user.password !== hashedPassword && user.password !== password) {
     user.failedAttempts++;
     if (user.failedAttempts >= 3) {
       user.isBlocked = true;
@@ -53,7 +67,7 @@ app.post('/login', (req, res) => {
       return res.status(403).send('Користувача заблоковано через 3 невдалі спроби.');
     }
     saveUsers(users);
-    return res.status(401).send(`Неправильний пароль. Спроб: ${user.failedAttempts}`);
+    return res.status(401).send(`Неправильний пароль. Спроба: ${user.failedAttempts}`);
   }
 
   user.failedAttempts = 0;
@@ -63,16 +77,18 @@ app.post('/login', (req, res) => {
 
 // Додавання користувача (адміністратор)
 app.post('/admin/add-user', (req, res) => {
-  const { username } = req.body;
+  const { username, password } = req.body;
   const users = loadUsers();
   
   if (users.some(user => user.username === username)) {
     return res.status(400).send('Користувач із таким ім\'ям вже існує.');
   }
 
+  const hashedPassword = hashPassword(password);  // Хешуємо пароль
+
   users.push({
     username,
-    password: '',
+    password: hashedPassword,  // Зберігаємо хешований пароль
     isAdmin: false,
     isBlocked: false,
     passwordRestrictions: false,
@@ -122,13 +138,17 @@ app.post('/change-password', (req, res) => {
   const user = users.find(u => u.username === username);
 
   if (!user) return res.status(404).send('Користувача не знайдено.');
-  if (user.password !== oldPassword) return res.status(401).send('Неправильний старий пароль.');
+
+  const oldHashedPassword = hashPassword(oldPassword);
+  if (user.password !== oldHashedPassword && user.password !== oldPassword) {
+    return res.status(401).send('Неправильний старий пароль.');
+  }
 
   if (user.passwordRestrictions && !/[a-zA-Z]/.test(newPassword) || !/[а-яА-ЯёЁ]/.test(newPassword)) {
     return res.status(400).send('Пароль має містити як латинські, так і кириличні літери.');
   }
 
-  user.password = newPassword;
+  user.password = hashPassword(newPassword);  // Хешуємо новий пароль
   saveUsers(users);
   res.send('Пароль успішно змінено.');
 });

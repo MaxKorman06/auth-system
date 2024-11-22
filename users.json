@@ -2,6 +2,7 @@
   {
     "username": "ADMIN",
     "password": "123",
+    "hashedPassword": "1000",
     "isAdmin": true,
     "isBlocked": false,
     "passwordRestrictions": false,
@@ -9,15 +10,17 @@
   },
   {
     "username": "user1",
-    "password": "RFVКАМ",
+    "password": "12.194819675013187",
+    "hashedPassword": "1000",
     "isAdmin": false,
     "isBlocked": false,
     "passwordRestrictions": true,
-    "failedAttempts": 0
+    "failedAttempts": 1
   },
   {
     "username": "Test 1",
     "password": "",
+    "hashedPassword": "1000",
     "isAdmin": false,
     "isBlocked": true,
     "passwordRestrictions": true,
@@ -26,6 +29,7 @@
   {
     "username": "Test 2",
     "password": "",
+    "hashedPassword": "1000",
     "isAdmin": false,
     "isBlocked": false,
     "passwordRestrictions": false,
