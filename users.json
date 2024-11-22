@@ -9,12 +9,12 @@
   },
   {
     "username": "user1",
-    "password": "165.896132693415",
+    "password": "142.37172979226364",
     "isAdmin": false,
     "isBlocked": false,
     "passwordRestrictions": false,
     "failedAttempts": 0,
-    "truePassword": "RFVКАМ"
+    "truePassword": "RFVКАМ1"
   },
   {
     "username": "user2",
