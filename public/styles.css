@@ -18,3 +18,13 @@ button {
   padding: 10px 20px;
   font-size: 16px;
 }
+
+#key-form {
+  margin-top: 20px;
+}
+
+#key-form input {
+  padding: 10px;
+  font-size: 16px;
+  margin-top: 10px;
+}

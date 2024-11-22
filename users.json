@@ -24,5 +24,13 @@
     "passwordRestrictions": false,
     "failedAttempts": 0,
     "truePassword": "TGBЕПИ"
+  },
+  {
+    "username": "user3",
+    "password": "",
+    "isAdmin": false,
+    "isBlocked": false,
+    "passwordRestrictions": false,
+    "failedAttempts": 0
   }
 ]

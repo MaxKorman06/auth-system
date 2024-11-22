@@ -94,3 +94,20 @@ function changePassword() {
     .then(message => alert(message))
     .catch(err => console.error('Помилка зміни пароля:', err));
 }
+function checkKey() {
+  const key = document.getElementById('key').value;
+
+  fetch('/check-key', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key })
+  })
+    .then(response => response.text())
+    .then(message => {
+      alert(message);
+    })
+    .catch(err => {
+      console.error('Помилка перевірки ключа:', err);
+      alert('Неправильний ключ!');
+    });
+}

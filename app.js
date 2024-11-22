@@ -17,6 +17,20 @@ if (!fs.existsSync(LOGS_DIR)) {
   fs.mkdirSync(LOGS_DIR);
 }
 
+app.post('/check-key', (req, res) => {
+  const { key } = req.body;
+  
+  // Розшифровка введеного ключа
+  const decryptedKey = decryptCaesarCipher(key, 3); // Відновлюємо ключ із шифру Цезаря
+
+  // Перевірка на відповідність з оригінальним текстом
+  if (decryptedKey === 'Tabula rasa') {
+    res.send('Ключ правильний!');
+  } else {
+    res.status(400).send('Неправильний ключ!');
+  }
+});
+
 // Функція для хешування пароля за допомогою a*sin(1/x)
 function hashPassword(password) {
   const a = 1000;
