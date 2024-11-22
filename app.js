@@ -17,19 +17,37 @@ if (!fs.existsSync(LOGS_DIR)) {
   fs.mkdirSync(LOGS_DIR);
 }
 
+// Перевірка ключа
 app.post('/check-key', (req, res) => {
   const { key } = req.body;
-  
-  // Розшифровка введеного ключа
-  const decryptedKey = decryptCaesarCipher(key, 3); // Відновлюємо ключ із шифру Цезаря
 
-  // Перевірка на відповідність з оригінальним текстом
-  if (decryptedKey === 'Tabula rasa') {
-    res.send('Ключ правильний!');
-  } else {
-    res.status(400).send('Неправильний ключ!');
+  // Перевірка введеного ключа після дешифрування
+  const decryptedKey = decryptCaesarCipher(key, 3);  // Розшифровуємо введений ключ
+  if (decryptedKey === 'Tabula rasa') // Wdexod udvd - колюч
+  {
+    return res.send('Ключ вірний!');
   }
+  return res.status(403).send('Невірний ключ!');
 });
+
+// Функція для шифрування тексту за шифром Цезаря
+function caesarCipher(text, shift) {
+  return text.split('').map(char => {
+    const code = char.charCodeAt(0);
+
+    // Якщо це буква латинського алфавіту
+    if (char.match(/[a-zA-Z]/)) {
+      const base = char >= 'a' && char <= 'z' ? 'a'.charCodeAt(0) : 'A'.charCodeAt(0);
+      return String.fromCharCode(((code - base + shift) % 26) + base);
+    }
+    return char;
+  }).join('');
+}
+
+// Функція для розшифровки за шифром Цезаря
+function decryptCaesarCipher(text, shift) {
+  return caesarCipher(text, -shift);
+}
 
 // Функція для хешування пароля за допомогою a*sin(1/x)
 function hashPassword(password) {

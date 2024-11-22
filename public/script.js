@@ -94,8 +94,9 @@ function changePassword() {
     .then(message => alert(message))
     .catch(err => console.error('Помилка зміни пароля:', err));
 }
+
 function checkKey() {
-  const key = document.getElementById('key').value;
+  const key = prompt('Введіть ключ:');  // Діалогове вікно для введення ключа
 
   fetch('/check-key', {
     method: 'POST',
@@ -104,10 +105,14 @@ function checkKey() {
   })
     .then(response => response.text())
     .then(message => {
-      alert(message);
+      if (message === 'Ключ вірний!') {
+        alert('Доступ надано!');
+      } else {
+        alert('Невірний ключ!');
+      }
     })
     .catch(err => {
       console.error('Помилка перевірки ключа:', err);
-      alert('Неправильний ключ!');
+      alert('Помилка перевірки ключа.');
     });
 }
