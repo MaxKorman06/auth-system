@@ -15,5 +15,14 @@
     "passwordRestrictions": false,
     "failedAttempts": 0,
     "truePassword": "RFVКАМ"
+  },
+  {
+    "username": "user2",
+    "password": "165.896132693415",
+    "isAdmin": false,
+    "isBlocked": false,
+    "passwordRestrictions": false,
+    "failedAttempts": 0,
+    "truePassword": "TGBЕПИ"
   }
 ]

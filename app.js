@@ -1,17 +1,25 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const crypto = require('crypto');  // Додано для хешування
+const crypto = require('crypto');
 const app = express();
 
 app.use(express.json());
 
 // Шлях до файлу користувачів
 const USERS_FILE = './users.json';
+const LOGS_DIR = './logs';
+const REGISTRATION_LOG = path.join(LOGS_DIR, 'registration.log');
+const OPERATION_LOG = path.join(LOGS_DIR, 'operation.log');
+
+// Створюємо папку logs, якщо вона не існує
+if (!fs.existsSync(LOGS_DIR)) {
+  fs.mkdirSync(LOGS_DIR);
+}
 
 // Функція для хешування пароля за допомогою a*sin(1/x)
 function hashPassword(password) {
-  const a = 1000
+  const a = 1000;
   if (!password || typeof password !== 'string' || password.trim() === '') {
     return ''; // Якщо пароль порожній або не рядок, повертаємо порожній хеш
   }
@@ -19,7 +27,6 @@ function hashPassword(password) {
   const hash = a * Math.sin(1 / x); // Формула хешування
   return hash.toString(); // Повертаємо хеш як рядок
 }
-
 
 // Завантаження користувачів з файлу
 function loadUsers() {
@@ -40,6 +47,20 @@ function loadUsers() {
 // Збереження користувачів у файл
 function saveUsers(users) {
   fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+}
+
+// Логування вхід/вихід користувачів
+function logRegistration(username, action) {
+  const timestamp = new Date().toISOString();
+  const logMessage = `${timestamp} - ${username} ${action}\n`;
+  fs.appendFileSync(REGISTRATION_LOG, logMessage);
+}
+
+// Логування дій користувачів
+function logOperation(username, action) {
+  const timestamp = new Date().toISOString();
+  const logMessage = `${timestamp} - ${username} ${action}\n`;
+  fs.appendFileSync(OPERATION_LOG, logMessage);
 }
 
 // Віддаємо статичні файли з папки (наприклад, HTML, CSS, JS)
@@ -74,6 +95,10 @@ app.post('/login', (req, res) => {
 
   user.failedAttempts = 0;
   saveUsers(users);
+  
+  // Логування успішного входу
+  logRegistration(username, 'ввійшов в систему');
+  
   res.json({ isAdmin: user.isAdmin });
 });
 
@@ -98,6 +123,10 @@ app.post('/admin/add-user', (req, res) => {
   });
 
   saveUsers(users);
+  
+  // Логування додавання користувача
+  logOperation(req.body.username, `додав користувача ${username}`);
+  
   res.send('Користувача додано.');
 });
 
@@ -111,6 +140,10 @@ app.post('/admin/block-user', (req, res) => {
   
   user.isBlocked = true;
   saveUsers(users);
+  
+  // Логування блокування користувача
+  logOperation(req.body.username, `заблокував користувача ${username}`);
+  
   res.send(`Користувача ${username} заблоковано.`);
 });
 
@@ -130,6 +163,10 @@ app.post('/admin/set-password-restrictions', (req, res) => {
 
   user.passwordRestrictions = restrictions;
   saveUsers(users);
+  
+  // Логування зміни обмежень на пароль
+  logOperation(req.body.username, `змінив обмеження на пароль для ${username}`);
+  
   res.send(`Обмеження на пароль для ${username} ${restrictions ? 'ввімкнено' : 'вимкнено'}.`);
 });
 
@@ -154,6 +191,10 @@ app.post('/change-password', (req, res) => {
   user.truePassword = newPassword;  // Зберігаємо новий справжній пароль
 
   saveUsers(users);
+
+  // Логування зміни пароля
+  logOperation(req.body.username, `змінив пароль користувача ${username}`);
+  
   res.send('Пароль успішно змінено.');
 });
 
